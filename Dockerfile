@@ -1,22 +1,17 @@
-FROM golang:1.21 as base
+FROM golang:1.21 AS build
 
 WORKDIR /app
-
-COPY go.mod ./
-
+COPY go.mod go.sum ./
 RUN go mod download
 
-COPY ..
- 
-RUN go build -o main .
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -o /main .
 
+FROM gcr.io/distroless/base-debian12
 
-FROM gcr.io/distroless/base
-
-COPY --from=base /app/main .
-
-COPY --from=base /app/static .
+WORKDIR /app
+COPY --from=build /main /main
+COPY --from=build /app/static ./static
 
 EXPOSE 8080
-
-CMS ['./main']
+CMD ["/main"]
