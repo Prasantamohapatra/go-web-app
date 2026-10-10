@@ -85,5 +85,5 @@ jobs:
           git config --global user.name "Prasantamohapatra"
           git add helm/go-web-app-chart/values.yaml
           git diff --cached --quiet || git commit -m "Update tag in helm chart"
-          git push 
+          git push -u origin main 
   
